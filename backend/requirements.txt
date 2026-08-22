@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+langchain-pinecone
+langchain-huggingface
+langchain-community
+langchain-groq
+langchain-core
+langgraph
+networkx
+python-dotenv
+pinecone-client

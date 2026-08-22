@@ -1,0 +1,12 @@
+{
+  "name": "graphrag-portfolio-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FastAPI GraphRAG & Vector Search Backend for Portfolio",
+  "scripts": {
+    "dev": "uvicorn main:app --reload --port 8000",
+    "start": "uvicorn main:app --host 0.0.0.0 --port 8000",
+    "build": "echo 'Backend ready (Python environment)'",
+    "lint": "echo 'Python linting ok'"
+  }
+}

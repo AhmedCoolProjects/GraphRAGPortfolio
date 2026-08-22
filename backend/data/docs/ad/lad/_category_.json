@@ -1,0 +1,7 @@
+{
+  "label": "Log-based (LAD)",
+  "position": 1,
+  "link": {
+    "type": "generated-index"
+  }
+}

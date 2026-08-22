@@ -1,0 +1,22 @@
+{
+  "name": "graphrag-portfolio-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "description": "GraphRAG Portfolio Monorepo - Next.js Frontend & FastAPI GraphRAG Backend",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "turbo run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0"
+  }
+}

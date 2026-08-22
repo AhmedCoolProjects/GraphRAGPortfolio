@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Python & Environment
+.venv/
+backend/.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.bak
+
+# Vector DB & Local Storage
+chroma_db/
+backend/chroma_db/
+zvec_data/
+backend/zvec_data/
+
+# Turborepo
+.turbo/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+frontend/.env.local
+backend/.env
+
+# macOS / System
+.DS_Store
+*.pem
