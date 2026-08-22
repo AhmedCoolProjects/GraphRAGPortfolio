@@ -193,9 +193,8 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         # Final reasoning step before tokens start.
         yield f"data: {json.dumps({'trace': {'step': 'answering', 'detail': ''}})}\n\n"
 
-        # Stream the final generation using urllib streaming (bypasses all SDK/httpx connection issues on Vercel)
-        import urllib.request
-        import ssl
+        # Stream the final generation using requests stream (bypasses socket/httpx connection issues on Vercel)
+        import requests
         api_key = os.getenv("GROQ_API_KEY", "").strip()
         if not api_key:
             raise RuntimeError("GROQ_API_KEY not set")
@@ -205,7 +204,7 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         groq_headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "User-Agent": "Groq-Python-SDK/1.0.0",
+            "User-Agent": "Mozilla/5.0",
         }
         groq_payload = {
             "model": MODEL_NAME,
@@ -217,12 +216,13 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         buf = ""
         in_think = False
-        ssl_ctx = ssl._create_unverified_context()
-        req = urllib.request.Request(groq_url, headers=groq_headers, data=json.dumps(groq_payload).encode("utf-8"))
-        with urllib.request.urlopen(req, context=ssl_ctx, timeout=30.0) as response:
-            for line in response:
+        with requests.post(groq_url, headers=groq_headers, json=groq_payload, stream=True, timeout=30.0) as response:
+            response.raise_for_status()
+            for line in response.iter_lines():
+                if not line:
+                    continue
                 line_str = line.decode("utf-8").strip()
-                if not line_str or not line_str.startswith("data: "):
+                if not line_str.startswith("data: "):
                     continue
                 data_str = line_str[6:].strip()
                 if data_str == "[DONE]":

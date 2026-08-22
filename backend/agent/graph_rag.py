@@ -61,9 +61,8 @@ _retriever = "uninitialized"  # sentinel; becomes a retriever or None
 
 
 def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
-    """Direct lightweight Groq call via urllib (bypasses all SDK/httpx socket issues on Vercel)."""
-    import urllib.request
-    import ssl
+    """Direct lightweight Groq call via requests (bypasses socket/urllib issues on Vercel)."""
+    import requests
     api_key = os.getenv("GROQ_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("GROQ_API_KEY not set")
@@ -72,7 +71,7 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "User-Agent": "Groq-Python-SDK/1.0.0",
+        "User-Agent": "Mozilla/5.0",
     }
     payload = {
         "model": MODEL_NAME,
@@ -80,15 +79,14 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
         "temperature": 0.3,
         "max_tokens": max_tokens,
     }
-    ctx = ssl._create_unverified_context()
-    req = urllib.request.Request(url, headers=headers, data=json.dumps(payload).encode("utf-8"))
-    with urllib.request.urlopen(req, context=ctx, timeout=30.0) as resp:
-        data = json.loads(resp.read().decode("utf-8"))
-        raw = data["choices"][0]["message"]["content"]
-        # Strip thinking tags if present from qwen/deepseek models
-        if "</think>" in raw:
-            raw = raw.split("</think>")[-1].strip()
-        return raw
+    res = requests.post(url, headers=headers, json=payload, timeout=30.0)
+    res.raise_for_status()
+    data = res.json()
+    raw = data["choices"][0]["message"]["content"]
+    # Strip thinking tags if present from qwen/deepseek models
+    if "</think>" in raw:
+        raw = raw.split("</think>")[-1].strip()
+    return raw
 
 
 def get_llm():
