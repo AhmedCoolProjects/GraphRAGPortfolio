@@ -79,7 +79,7 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
         "temperature": 0.3,
         "max_tokens": max_tokens,
     }
-    ctx = ssl.create_default_context()
+    ctx = ssl._create_unverified_context()
     req = urllib.request.Request(url, headers=headers, data=json.dumps(payload).encode("utf-8"))
     with urllib.request.urlopen(req, context=ctx, timeout=30.0) as resp:
         data = json.loads(resp.read().decode("utf-8"))
