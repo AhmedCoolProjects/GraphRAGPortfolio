@@ -193,6 +193,8 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         # Final reasoning step before tokens start.
         yield f"data: {json.dumps({'trace': {'step': 'answering', 'detail': ''}})}\n\n"
 
+        messages = build_generation_messages(state)
+
         # Stream the final generation using requests stream (bypasses socket/httpx connection issues on Vercel)
         import requests
         api_key = os.getenv("GROQ_API_KEY", "").strip()
