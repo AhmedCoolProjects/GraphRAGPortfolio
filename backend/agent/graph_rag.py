@@ -62,6 +62,7 @@ _retriever = "uninitialized"  # sentinel; becomes a retriever or None
 def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
     """Direct lightweight Groq call via urllib (bypasses all SDK/httpx socket issues on Vercel)."""
     import urllib.request
+    import ssl
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         raise RuntimeError("GROQ_API_KEY not set")
@@ -78,8 +79,9 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
         "temperature": 0.3,
         "max_tokens": max_tokens,
     }
+    ctx = ssl.create_default_context()
     req = urllib.request.Request(url, headers=headers, data=json.dumps(payload).encode("utf-8"))
-    with urllib.request.urlopen(req, timeout=30.0) as resp:
+    with urllib.request.urlopen(req, context=ctx, timeout=30.0) as resp:
         data = json.loads(resp.read().decode("utf-8"))
         raw = data["choices"][0]["message"]["content"]
         # Strip thinking tags if present from qwen/deepseek models

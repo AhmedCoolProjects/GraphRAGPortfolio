@@ -192,6 +192,7 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         # Stream the final generation using urllib streaming (bypasses all SDK/httpx connection issues on Vercel)
         import urllib.request
+        import ssl
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise RuntimeError("GROQ_API_KEY not set")
@@ -213,8 +214,9 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         buf = ""
         in_think = False
+        ssl_ctx = ssl.create_default_context()
         req = urllib.request.Request(groq_url, headers=groq_headers, data=json.dumps(groq_payload).encode("utf-8"))
-        with urllib.request.urlopen(req, timeout=30.0) as response:
+        with urllib.request.urlopen(req, context=ssl_ctx, timeout=30.0) as response:
             for line in response:
                 line_str = line.decode("utf-8").strip()
                 if not line_str or not line_str.startswith("data: "):
