@@ -190,14 +190,40 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         # Final reasoning step before tokens start.
         yield f"data: {json.dumps({'trace': {'step': 'answering', 'detail': ''}})}\n\n"
 
-        # Stream the final generation with a rolling output leak guard.
-        messages = build_generation_messages(state)
-        llm = get_llm()
+        # Stream the final generation using native Groq client (bypasses langchain streaming overhead on Vercel)
+        from groq import Groq
+        api_key = os.getenv("GROQ_API_KEY")
+        client = Groq(api_key=api_key)
+
+        prompt_content = messages[0]["content"] if isinstance(messages[0], dict) else messages[0].content
+        groq_stream = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt_content}],
+            temperature=0.3,
+            max_tokens=600,
+            stream=True
+        )
+
         buf = ""
-        async for chunk in llm.astream(messages):
-            text = getattr(chunk, "content", "") or ""
+        in_think = False
+        for chunk in groq_stream:
+            text = chunk.choices[0].delta.content or ""
             if not text:
                 continue
+
+            # Filter out reasoning/thinking tags from qwen/deepseek models
+            if "<think>" in text:
+                in_think = True
+                continue
+            if "</think>" in text:
+                in_think = False
+                parts = text.split("</think>")
+                text = parts[-1].lstrip()
+                if not text:
+                    continue
+            elif in_think:
+                continue
+
             buf += text
             if detect_prompt_leak(buf):
                 events.record("leak_blocked", risk="high",
