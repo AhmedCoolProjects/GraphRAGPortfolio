@@ -190,49 +190,67 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         # Final reasoning step before tokens start.
         yield f"data: {json.dumps({'trace': {'step': 'answering', 'detail': ''}})}\n\n"
 
-        # Stream the final generation using native Groq client with httpx (http2=False for Vercel serverless compatibility)
+        # Stream the final generation using direct httpx streaming to Groq API (bypasses all SDK/event loop issues on Vercel)
         import httpx
-        from groq import Groq
         api_key = os.getenv("GROQ_API_KEY")
-        client = Groq(api_key=api_key, http_client=httpx.Client(http2=False))
+        if not api_key:
+            raise RuntimeError("GROQ_API_KEY not set")
 
         prompt_content = messages[0]["content"] if isinstance(messages[0], dict) else messages[0].content
-        groq_stream = client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=[{"role": "user", "content": prompt_content}],
-            temperature=0.3,
-            max_tokens=600,
-            stream=True
-        )
+        groq_url = "https://api.groq.com/openai/v1/chat/completions"
+        groq_headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+        groq_payload = {
+            "model": MODEL_NAME,
+            "messages": [{"role": "user", "content": prompt_content}],
+            "temperature": 0.3,
+            "max_tokens": 600,
+            "stream": True,
+        }
 
         buf = ""
         in_think = False
-        for chunk in groq_stream:
-            text = chunk.choices[0].delta.content or ""
-            if not text:
-                continue
+        with httpx.Client(http2=False, timeout=30.0) as client:
+            with client.stream("POST", groq_url, headers=groq_headers, json=groq_payload) as response:
+                response.raise_for_status()
+                for line in response.iter_lines():
+                    if not line:
+                        continue
+                    if line.startswith("data: "):
+                        data_str = line[6:].strip()
+                        if data_str == "[DONE]":
+                            break
+                        try:
+                            data = json.loads(data_str)
+                            text = data["choices"][0]["delta"].get("content", "") or ""
+                            if not text:
+                                continue
 
-            # Filter out reasoning/thinking tags from qwen/deepseek models
-            if "<think>" in text:
-                in_think = True
-                continue
-            if "</think>" in text:
-                in_think = False
-                parts = text.split("</think>")
-                text = parts[-1].lstrip()
-                if not text:
-                    continue
-            elif in_think:
-                continue
+                            # Filter out reasoning/thinking tags from qwen/deepseek models
+                            if "<think>" in text:
+                                in_think = True
+                                continue
+                            if "</think>" in text:
+                                in_think = False
+                                parts = text.split("</think>")
+                                text = parts[-1].lstrip()
+                                if not text:
+                                    continue
+                            elif in_think:
+                                continue
 
-            buf += text
-            if detect_prompt_leak(buf):
-                events.record("leak_blocked", risk="high",
-                              detail="system prompt leak (stream)")
-                yield f"data: {json.dumps({'trace': {'step': 'shield', 'detail': 'leak_blocked'}})}\n\n"
-                yield f"data: {json.dumps({'chunk': ' …[response withheld: I keep my configuration private.]'})}\n\n"
-                break
-            yield f"data: {json.dumps({'chunk': text})}\n\n"
+                            buf += text
+                            if detect_prompt_leak(buf):
+                                events.record("leak_blocked", risk="high",
+                                              detail="system prompt leak (stream)")
+                                yield f"data: {json.dumps({'trace': {'step': 'shield', 'detail': 'leak_blocked'}})}\n\n"
+                                yield f"data: {json.dumps({'chunk': ' …[response withheld: I keep my configuration private.]'})}\n\n"
+                                break
+                            yield f"data: {json.dumps({'chunk': text})}\n\n"
+                        except Exception:
+                            pass
 
         yield f"data: {json.dumps({'done': True})}\n\n"
     except Exception as e:
