@@ -6,8 +6,8 @@ Created by **Ahmed Bargady** — PhD Student in AI & Cybersecurity at **UM6P (Mo
 
 ---
 
-<!-- PHOTO PLACEHOLDER: Main Banner / Hero Screenshot -->
-<!-- <img src="./docs/images/hero-banner.png" alt="GraphRAG Digital Twin Banner" width="100%" /> -->
+<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/8e348d85-224c-4ef8-8a76-9cefeb62d7ac" />
+
 
 ---
 
@@ -15,8 +15,7 @@ Created by **Ahmed Bargady** — PhD Student in AI & Cybersecurity at **UM6P (Mo
 
 This monorepo powers an AI-driven digital twin designed to answer complex technical, research, and career inquiries in real-time. Unlike standard RAG systems, it combines **Agentic Corrective RAG (LangGraph)**, structured **Knowledge Graphs**, and **AI Security Guardrails**.
 
-<!-- PHOTO PLACEHOLDER: Architecture Diagram / System Overview -->
-<!-- <img src="./docs/images/architecture-diagram.png" alt="GraphRAG Architecture Diagram" width="100%" /> -->
+
 
 ```text
                ┌────────────────────────────────────────────────────────┐
@@ -53,8 +52,8 @@ This monorepo powers an AI-driven digital twin designed to answer complex techni
 - **Corrective Retrieval Loop**: Grades retrieved facts; if context is insufficient, it rewrites the query dynamically and re-retrieves before generation.
 - **Hybrid Retrieval**: Fuses deterministic Knowledge Graph subgraphs with high-dimensional vector embeddings for max recall and precision.
 
-<!-- PHOTO PLACEHOLDER: GraphRAG Thinking Trace & Reasoning UI -->
-<!-- <img src="./docs/images/graphrag-thinking-trace.png" alt="GraphRAG Reasoning Trace" width="100%" /> -->
+<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/a12c7aaf-1666-4bbf-bbfd-2596810fe412" />
+
 
 ---
 
@@ -62,8 +61,8 @@ This monorepo powers an AI-driven digital twin designed to answer complex techni
 - **Entity Linking**: Maps research domains (APT Detection, Provenance Graphs, GNNs, Transformers) to papers, projects, and skills.
 - **Live Traversal Stream**: Emits active graph paths alongside response streams, rendering interactive node topologies in the UI.
 
-<!-- PHOTO PLACEHOLDER: Knowledge Graph Topology View -->
-<!-- <img src="./docs/images/knowledge-graph-viz.png" alt="Knowledge Graph Topology Visualization" width="100%" /> -->
+<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/8d22319e-dd59-444d-a537-4c283b00ad2c" />
+
 
 ---
 
@@ -72,8 +71,8 @@ This monorepo powers an AI-driven digital twin designed to answer complex techni
 - **System Prompt Leak Guard**: Output stream monitoring to prevent sensitive context disclosure.
 - **Rate Limiting & Red-Teaming Suite**: Built-in endpoints for automated security evaluation.
 
-<!-- PHOTO PLACEHOLDER: Security Showcase & Red-Teaming Dashboard -->
-<!-- <img src="./docs/images/security-showcase.png" alt="Security Guardrails & Red Teaming" width="100%" /> -->
+<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/4732f7f5-b50f-4eae-bde7-9266f3f029d5" />
+
 
 ---
 
