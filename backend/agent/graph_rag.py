@@ -59,20 +59,45 @@ _llm = None
 _retriever = "uninitialized"  # sentinel; becomes a retriever or None
 
 
-def get_llm():
-    """Lazily build the Groq chat model. Raises if the key is missing."""
-    global _llm
-    if _llm is None:
-        import httpx
-        from langchain_groq import ChatGroq
+def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
+    """Direct lightweight Groq call via httpx (bypasses langchain overhead on Vercel)."""
+    import httpx
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise RuntimeError("GROQ_API_KEY not set")
+    
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": MODEL_NAME,
+        "messages": [{"role": "user", "content": prompt_text}],
+        "temperature": 0.3,
+        "max_tokens": max_tokens,
+    }
+    with httpx.Client(http2=False, timeout=30.0) as client:
+        res = client.post(url, headers=headers, json=payload)
+        res.raise_for_status()
+        data = res.json()
+        raw = data["choices"][0]["message"]["content"]
+        # Strip thinking tags if present from qwen/deepseek models
+        if "</think>" in raw:
+            raw = raw.split("</think>")[-1].strip()
+        return raw
 
-        api_key = os.getenv("GROQ_API_KEY")
-        if not api_key:
-            raise RuntimeError("GROQ_API_KEY not set")
-        _llm = ChatGroq(model=MODEL_NAME, temperature=0.3,
-                        max_tokens=600, api_key=api_key,
-                        http_client=httpx.Client(http2=False))
-    return _llm
+
+def get_llm():
+    """Wrapper returning a compatibility object with .invoke()."""
+    class GroqWrapper:
+        def invoke(self, messages):
+            text = messages[0]["content"] if isinstance(messages[0], dict) else getattr(messages[0], "content", str(messages[0]))
+            class Response:
+                def __init__(self, content):
+                    self.content = content
+            return Response(call_groq_sync(text))
+    return GroqWrapper()
 
 
 def get_vector_retriever():
@@ -241,7 +266,7 @@ def _llm_grade(question: str, context: str) -> bool:
         "information to answer the QUESTION. Reply with exactly 'YES' or 'NO'.\n\n"
         f"QUESTION: {question}\n\nCONTEXT:\n{context[:2000]}\n\nAnswer:"
     )
-    out = get_llm().invoke([{"role": "user", "content": prompt}]).content
+    out = call_groq_sync(prompt, max_tokens=20)
     return out.strip().upper().startswith("Y")
 
 
@@ -252,7 +277,7 @@ def _llm_rewrite(question: str, context: str) -> str:
         "career, projects, skills, or research. Return only the rewritten query.\n\n"
         f"Original question: {question}\nRewritten query:"
     )
-    out = get_llm().invoke([{"role": "user", "content": prompt}]).content
+    out = call_groq_sync(prompt, max_tokens=100)
     return out.strip().strip('"')
 
 
