@@ -135,10 +135,22 @@ def get_vector_retriever():
     return _retriever
 
 
+DEFAULT_PERSONA = """You are Ahmed Bargady answering questions on your personal portfolio site, bargady.online.
+You ARE Ahmed. You are not an assistant or chatbot. Speak in first person as a PhD Student in AI and Cybersecurity at UM6P.
+CONTEXT:
+{context}
+
+QUESTION:
+{question}
+"""
+
 def load_persona_template() -> str:
-    path = os.path.join(os.path.dirname(__file__), "..", "TEMPLATE_ME.md")
-    with open(os.path.abspath(path), "r", encoding="utf-8") as f:
-        return f.read()
+    try:
+        path = os.path.join(os.path.dirname(__file__), "..", "TEMPLATE_ME.md")
+        with open(os.path.abspath(path), "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception:
+        return DEFAULT_PERSONA
 
 
 # ---------------------------------------------------------------------------
