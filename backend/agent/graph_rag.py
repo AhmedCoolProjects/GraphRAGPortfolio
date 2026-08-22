@@ -63,13 +63,15 @@ def get_llm():
     """Lazily build the Groq chat model. Raises if the key is missing."""
     global _llm
     if _llm is None:
+        import httpx
         from langchain_groq import ChatGroq
 
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise RuntimeError("GROQ_API_KEY not set")
         _llm = ChatGroq(model=MODEL_NAME, temperature=0.3,
-                        max_tokens=600, api_key=api_key)
+                        max_tokens=600, api_key=api_key,
+                        http_client=httpx.Client(http2=False))
     return _llm
 
 

@@ -190,10 +190,11 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         # Final reasoning step before tokens start.
         yield f"data: {json.dumps({'trace': {'step': 'answering', 'detail': ''}})}\n\n"
 
-        # Stream the final generation using native Groq client (bypasses langchain streaming overhead on Vercel)
+        # Stream the final generation using native Groq client with httpx (http2=False for Vercel serverless compatibility)
+        import httpx
         from groq import Groq
         api_key = os.getenv("GROQ_API_KEY")
-        client = Groq(api_key=api_key)
+        client = Groq(api_key=api_key, http_client=httpx.Client(http2=False))
 
         prompt_content = messages[0]["content"] if isinstance(messages[0], dict) else messages[0].content
         groq_stream = client.chat.completions.create(
