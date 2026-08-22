@@ -1,6 +1,9 @@
 import os
 import re
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 from typing import Any, Dict, List, AsyncGenerator
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
