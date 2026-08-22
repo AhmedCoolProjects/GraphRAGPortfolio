@@ -118,7 +118,7 @@ GraphRAGPortfolio/
 Clone the repository and install root workspace dependencies:
 
 ```bash
-git clone https://github.com/your-username/GraphRAGPortfolio.git
+git clone https://github.com/AhmedCoolProjects/GraphRAGPortfolio.git
 cd GraphRAGPortfolio
 
 # Install Node dependencies for all workspaces
@@ -168,4 +168,22 @@ npm run dev
 
 ## 📜 License
 
-MIT License © [Ahmed Bargady](https://github.com/your-username)
+This project is licensed under the [MIT License](LICENSE) — see the LICENSE file for details.
+
+---
+
+## 👨‍💻 Connect & Follow
+
+<div align="center">
+
+### **Ahmed Bargady**
+*PhD Student in AI & Cybersecurity @ UM6P*
+
+[![Portfolio](https://img.shields.io/badge/Website-bargady.online-000000?style=for-the-badge&logo=react&logoColor=61DAFB)](https://bargady.online/)
+[![GitHub](https://img.shields.io/badge/GitHub-AhmedCoolProjects-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AhmedCoolProjects)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Ahmed_Bargady-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ahmed-bargady/)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-ahmedBargady-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/ahmedBargady)
+[![X / Twitter](https://img.shields.io/badge/X-@AhmedBargady-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/AhmedBargady)
+
+</div>
+
