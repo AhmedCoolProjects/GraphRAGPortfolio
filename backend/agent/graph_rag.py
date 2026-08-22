@@ -71,6 +71,7 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
+        "Connection": "close",
         "User-Agent": "Mozilla/5.0",
     }
     payload = {
