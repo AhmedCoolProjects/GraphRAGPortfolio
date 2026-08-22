@@ -164,7 +164,7 @@ async def chat_endpoint(body: ChatRequest, request: Request):
         raise HTTPException(status_code=500, detail="Internal server error.")
 
 
-async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, None]:
+def stream_response(question: str, client_id: str):
     """Stream the agent's thinking trace, then the answer token-by-token.
 
     Event shapes (all `data: <json>`):
