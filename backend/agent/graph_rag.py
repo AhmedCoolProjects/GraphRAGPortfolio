@@ -70,6 +70,7 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
+        "User-Agent": "Groq-Python-SDK/1.0.0",
     }
     payload = {
         "model": MODEL_NAME,

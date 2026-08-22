@@ -201,6 +201,7 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         groq_headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
+            "User-Agent": "Groq-Python-SDK/1.0.0",
         }
         groq_payload = {
             "model": MODEL_NAME,
