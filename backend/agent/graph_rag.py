@@ -114,7 +114,7 @@ def get_vector_retriever():
         hf_key = os.getenv("HF_API_KEY")
         pc_key = os.getenv("PINECONE_API_KEY")
         index = os.getenv("PINECONE_INDEX_NAME")
-        if not (hf_key and pc_key and index):
+        if not (hf_key and pc_key and index and os.getenv("ENABLE_PINECONE") == "true"):
             _retriever = None
             return None
 
