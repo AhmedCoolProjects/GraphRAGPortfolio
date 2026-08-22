@@ -119,7 +119,17 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="text-base sm:text-lg text-zinc-500 dark:text-zinc-400 mb-3 flex flex-wrap justify-center items-center gap-x-2 gap-y-1"
           >
-            <span>PhD Student in</span>
+            <span>Graduated</span>
+            <PointerHighlight
+              rectangleClassName="bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-700"
+              pointerClassName="text-emerald-500 h-3 w-3"
+              containerClassName="inline-block"
+            >
+              <span className="relative z-10 font-semibold text-emerald-600 dark:text-emerald-400 px-1">
+                AI Engineer
+              </span>
+            </PointerHighlight>
+            <span>(4+ Yrs Exp) & PhD Student in</span>
             <PointerHighlight
               rectangleClassName="bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-700"
               pointerClassName="text-blue-500 h-3 w-3"
@@ -148,8 +158,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
             className="text-sm sm:text-base text-zinc-600 dark:text-zinc-500 max-w-xl mx-auto mb-10 leading-relaxed"
           >
-            Researching AI-driven security at UM6P. Passionate about machine learning,
-            intrusion detection, and building intelligent systems.
+            Graduated Data Science & AI Engineer from ESI Rabat with 4+ years of software and ML experience, currently pursuing PhD research in AI-driven cybersecurity at UM6P.
           </motion.p>
 
           {/* Primary CTA: Chat input */}
@@ -243,9 +252,7 @@ export default function Home() {
               Building at the edge of AI and security.
             </h2>
             <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              I&apos;m a PhD student at Mohammed VI Polytechnic University working on
-              applied machine learning for cybersecurity. I split my time between research,
-              engineering, and shipping open-source projects.
+              I&apos;m a Data Science & AI Engineer with 4+ years of hands-on industry and software engineering experience. Currently, I&apos;m a PhD researcher at Mohammed VI Polytechnic University focusing on applied machine learning, intrusion detection systems, and GraphRAG architectures.
             </p>
           </motion.div>
 
