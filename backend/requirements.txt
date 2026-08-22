@@ -8,4 +8,4 @@ langchain-core
 langgraph
 networkx
 python-dotenv
-pinecone-client
+pinecone
