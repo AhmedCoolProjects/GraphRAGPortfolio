@@ -80,7 +80,7 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
         "temperature": 0.3,
         "max_tokens": max_tokens,
     }
-    res = requests.post(url, headers=headers, json=payload, timeout=30.0)
+    res = requests.post(url, headers=headers, json=payload, verify=False, timeout=30.0)
     res.raise_for_status()
     data = res.json()
     raw = data["choices"][0]["message"]["content"]

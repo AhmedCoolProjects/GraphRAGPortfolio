@@ -225,7 +225,7 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         buf = ""
         in_think = False
-        with requests.post(groq_url, headers=groq_headers, json=groq_payload, stream=True, timeout=30.0) as response:
+        with requests.post(groq_url, headers=groq_headers, json=groq_payload, verify=False, stream=True, timeout=30.0) as response:
             response.raise_for_status()
             for line in response.iter_lines():
                 if not line:
