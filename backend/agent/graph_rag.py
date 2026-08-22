@@ -79,7 +79,8 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
     }
     with httpx.Client(http2=False, timeout=30.0) as client:
         res = client.post(url, headers=headers, json=payload)
-        res.raise_for_status()
+        if res.status_code != 200:
+            raise RuntimeError(f"Groq API Error {res.status_code}: {res.text}")
         data = res.json()
         raw = data["choices"][0]["message"]["content"]
         # Strip thinking tags if present from qwen/deepseek models
