@@ -33,6 +33,7 @@ app = FastAPI(title="Ahmed Portfolio API — Agentic GraphRAG")
 DEFAULT_ORIGINS = [
     "https://bargady.online",
     "https://www.bargady.online",
+    "https://front.bargady.online",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
