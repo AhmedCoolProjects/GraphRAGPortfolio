@@ -1,40 +1,106 @@
-# GraphRAG Portfolio Monorepo
+# 🧠 GraphRAG Digital Twin & Interactive Portfolio
 
-Welcome to the **GraphRAG Portfolio** repository! This monorepo combines an interactive, modern Next.js frontend with an AI-powered FastAPI backend utilizing Knowledge Graphs and Vector RAG (Retrieval-Augmented Generation).
+> **Production Monorepo**: Next.js 15 (React 19, Turbopack, Tailwind CSS v4, Motion) + FastAPI Agentic GraphRAG Backend (LangGraph, Knowledge Graph, Pinecone Vector Search, LLM Guardrails).
+
+Created by **Ahmed Bargady** — PhD Student in AI & Cybersecurity at **UM6P (Mohammed VI Polytechnic University)**.
 
 ---
 
-## 🏗 Repository Structure
+<!-- PHOTO PLACEHOLDER: Main Banner / Hero Screenshot -->
+<!-- <img src="./docs/images/hero-banner.png" alt="GraphRAG Digital Twin Banner" width="100%" /> -->
+
+---
+
+## 🌟 Architecture Overview
+
+This monorepo powers an AI-driven digital twin designed to answer complex technical, research, and career inquiries in real-time. Unlike standard RAG systems, it combines **Agentic Corrective RAG (LangGraph)**, structured **Knowledge Graphs**, and **AI Security Guardrails**.
+
+<!-- PHOTO PLACEHOLDER: Architecture Diagram / System Overview -->
+<!-- <img src="./docs/images/architecture-diagram.png" alt="GraphRAG Architecture Diagram" width="100%" /> -->
 
 ```text
-GraphRAGPortfolio/
-├── frontend/             # Next.js 15+ (React 19, Tailwind CSS v4, Motion, Shadcn UI)
-│   ├── src/              # App routes, interactive chat, knowledge graph visualization
-│   └── package.json      # Frontend UI dependencies
-│
-├── backend/              # FastAPI Python Backend (GraphRAG, LangGraph, Vector Store)
-│   ├── main.py           # FastAPI entrypoint & endpoints
-│   ├── agent/            # LangGraph / Graph RAG agent pipeline
-│   ├── kg/               # Knowledge graph schema & store
-│   ├── security/         # Security, guardrails, & rate limiting
-│   ├── data/             # Markdown docs & biography knowledge base
-│   ├── requirements.txt  # Python package dependencies
-│   └── package.json      # Workspace runner script for Python
-│
-├── package.json          # Root Monorepo configuration (Workspaces + Turborepo)
-├── turbo.json            # Turborepo task pipeline configuration
-├── .gitignore            # Git ignore definitions for Node & Python
-└── .env.example          # Environment variables template
+               ┌────────────────────────────────────────────────────────┐
+               │              Next.js 15 Frontend (App Router)          │
+               │   Chat Interface • Knowledge Graph Viz • Security Hub   │
+               └───────────────────────────┬────────────────────────────┘
+                                           │ SSE / Stream
+                                           ▼
+               ┌────────────────────────────────────────────────────────┐
+               │             FastAPI GraphRAG Server Endpoint           │
+               └───────────────────────────┬────────────────────────────┘
+                                           │
+                        ┌──────────────────┴──────────────────┐
+                        ▼                                     ▼
+           ┌────────────────────────┐            ┌────────────────────────┐
+           │   AI Security Shield   │            │   LangGraph State Engine│
+           │ Prompt Leak & Injection│            │  Adaptive Routing Node │
+           └────────────────────────┘            └───────────┬────────────┘
+                                                             │
+                                        ┌────────────────────┴────────────────────┐
+                                        ▼                                         ▼
+                           ┌────────────────────────┐                ┌────────────────────────┐
+                           │   Knowledge Graph      │                │   Pinecone Vector DB   │
+                           │ Multi-Hop Entity Facts │                │  Semantic Document RAG │
+                           └────────────────────────┘                └────────────────────────┘
 ```
 
 ---
 
-## ⚡ Features
+## ⚡ Core Technical Highlights
 
-- **Interactive AI Assistant**: GraphRAG agent answering technical, personal, and research questions.
-- **Knowledge Graph Visualization**: Interactive graph views linking topics, publications, and skills.
-- **Security & Guardrails**: Built-in prompt injection defense, rate limiting, and output moderation.
-- **Turborepo Orchestration**: Fast, unified monorepo task execution (`dev`, `build`, `lint`).
+### 1. 🤖 Agentic GraphRAG (LangGraph)
+- **Adaptive Routing**: Automatically detects query intent (*Smalltalk*, *General Knowledge*, *Entity-Grounded*, or *Multi-hop Complex*).
+- **Corrective Retrieval Loop**: Grades retrieved facts; if context is insufficient, it rewrites the query dynamically and re-retrieves before generation.
+- **Hybrid Retrieval**: Fuses deterministic Knowledge Graph subgraphs with high-dimensional vector embeddings for max recall and precision.
+
+<!-- PHOTO PLACEHOLDER: GraphRAG Thinking Trace & Reasoning UI -->
+<!-- <img src="./docs/images/graphrag-thinking-trace.png" alt="GraphRAG Reasoning Trace" width="100%" /> -->
+
+---
+
+### 2. 🕸 Interactive Knowledge Graph
+- **Entity Linking**: Maps research domains (APT Detection, Provenance Graphs, GNNs, Transformers) to papers, projects, and skills.
+- **Live Traversal Stream**: Emits active graph paths alongside response streams, rendering interactive node topologies in the UI.
+
+<!-- PHOTO PLACEHOLDER: Knowledge Graph Topology View -->
+<!-- <img src="./docs/images/knowledge-graph-viz.png" alt="Knowledge Graph Topology Visualization" width="100%" /> -->
+
+---
+
+### 3. 🛡 AI Security Showcase & Red-Teaming Guardrails
+- **Prompt Injection Defense**: Pre-execution input classification blocking adversarial jailbreaks.
+- **System Prompt Leak Guard**: Output stream monitoring to prevent sensitive context disclosure.
+- **Rate Limiting & Red-Teaming Suite**: Built-in endpoints for automated security evaluation.
+
+<!-- PHOTO PLACEHOLDER: Security Showcase & Red-Teaming Dashboard -->
+<!-- <img src="./docs/images/security-showcase.png" alt="Security Guardrails & Red Teaming" width="100%" /> -->
+
+---
+
+## 📁 Repository Layout
+
+```text
+GraphRAGPortfolio/
+├── frontend/             # Next.js 15 (React 19, Turbopack, Tailwind CSS v4, Motion, Lucide)
+│   ├── src/
+│   │   ├── app/          # App router pages (Home, Chat, Security Showcase)
+│   │   ├── components/   # Interactive Graph, Chat UI, Reasoning Trace, Terminal components
+│   │   └── store/        # Zustand state management
+│   └── package.json
+│
+├── backend/              # FastAPI Python Backend
+│   ├── agent/            # LangGraph state machine & Corrective RAG pipeline
+│   ├── kg/               # Knowledge graph schema, networkx, & store
+│   ├── security/         # Red-teaming scripts, guardrails, & rate limiters
+│   ├── data/             # Research documents, papers, & bio knowledge base
+│   ├── config.py         # Centralized model & server configuration
+│   └── requirements.txt
+│
+├── package.json          # Root npm workspace & script orchestration
+├── turbo.json            # Turborepo task pipeline configuration
+├── .gitignore
+└── .env.example
+```
 
 ---
 
@@ -55,7 +121,7 @@ Clone the repository and install root workspace dependencies:
 git clone https://github.com/your-username/GraphRAGPortfolio.git
 cd GraphRAGPortfolio
 
-# Install Node dependencies across workspace
+# Install Node dependencies for all workspaces
 npm install
 ```
 
@@ -71,40 +137,35 @@ cd ..
 
 ---
 
-### 2. Environment Setup
+### 2. Environment Configuration
 
-Copy `.env.example` to your environment files:
+Copy `.env.example` to set up environment variables:
 
 ```bash
 cp .env.example .env
 ```
 
-Fill in your required API keys (e.g. `GROQ_API_KEY`, `PINECONE_API_KEY`, `NEXT_PUBLIC_API_URL`).
+Configure your environment variables:
+- `GROQ_API_KEY`: Groq API Key for fast LLM inference.
+- `PINECONE_API_KEY`: Pinecone Vector Store API Key.
+- `NEXT_PUBLIC_CHAT_API_URL`: Backend URL (e.g. `http://localhost:8000`).
 
 ---
 
-### 3. Running Development Mode
+### 3. Local Development
 
-From the root directory, run both Frontend and Backend concurrently with Turborepo:
+Run both Frontend and Backend concurrently with Turborepo:
 
 ```bash
 npm run dev
 ```
 
-Or run individual services:
-
-- **Frontend only** (`http://localhost:3000`):
-  ```bash
-  npm run dev:frontend
-  ```
-
-- **Backend only** (`http://localhost:8000`):
-  ```bash
-  npm run dev:backend
-  ```
+- **Frontend**: `http://localhost:3000`
+- **Backend API**: `http://localhost:8000`
+- **Swagger Docs**: `http://localhost:8000/docs`
 
 ---
 
 ## 📜 License
 
-MIT License © Ahmed Bargady
+MIT License © [Ahmed Bargady](https://github.com/your-username)
