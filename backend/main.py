@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from config import MODEL_NAME
 from agent.graph_rag import (
     build_generation_messages,
     get_llm,
@@ -25,8 +26,6 @@ from security.ratelimit import chat_limiter
 from security.redteam import run_redteam
 
 # 1. Configuration
-MODEL_NAME = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
-
 app = FastAPI(title="Ahmed Portfolio API — Agentic GraphRAG")
 
 # 2. CORS — locked down by default (security showcase). Override with the
