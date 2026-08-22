@@ -25,7 +25,7 @@ from security.ratelimit import chat_limiter
 from security.redteam import run_redteam
 
 # 1. Configuration
-MODEL_NAME = "llama-3.3-70b-versatile"
+MODEL_NAME = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 app = FastAPI(title="Ahmed Portfolio API — Agentic GraphRAG")
 

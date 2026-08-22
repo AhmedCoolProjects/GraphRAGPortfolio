@@ -35,7 +35,7 @@ from kg.graph_store import get_graph
 
 MAX_RETRIES = 1                      # corrective re-retrievals on the complex path
 GRAPH_HOPS = 2
-MODEL_NAME = "llama-3.3-70b-versatile"
+MODEL_NAME = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 # Patterns that mean "this isn't really about Ahmed's work" -> light path.
 _SMALLTALK = re.compile(
