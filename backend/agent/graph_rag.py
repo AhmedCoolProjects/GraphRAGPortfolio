@@ -63,7 +63,7 @@ def call_groq_sync(prompt_text: str, max_tokens: int = 600) -> str:
     """Direct lightweight Groq call via urllib (bypasses all SDK/httpx socket issues on Vercel)."""
     import urllib.request
     import ssl
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("GROQ_API_KEY not set")
     
