@@ -196,71 +196,79 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         messages = build_generation_messages(state)
 
-        # Stream the final generation using requests stream
-        import requests
+        # Stream the final generation using http.client (zero external dependency/socket issues on Vercel)
+        import http.client
+        import ssl
         api_key = os.getenv("GROQ_API_KEY", "").strip()
         if not api_key:
             raise RuntimeError("GROQ_API_KEY not set")
 
         prompt_content = messages[0]["content"] if isinstance(messages[0], dict) else messages[0].content
-        groq_url = "https://api.groq.com/openai/v1/chat/completions"
-        groq_headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "Connection": "close",
-            "User-Agent": "Mozilla/5.0",
-        }
-        groq_payload = {
+        payload = json.dumps({
             "model": MODEL_NAME,
             "messages": [{"role": "user", "content": prompt_content}],
             "temperature": 0.3,
             "max_tokens": 600,
             "stream": True,
+        })
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0",
         }
 
         buf = ""
         in_think = False
-        with requests.post(groq_url, headers=groq_headers, json=groq_payload, verify=False, stream=True, timeout=30.0) as response:
-            response.raise_for_status()
-            for line in response.iter_lines(decode_unicode=False):
-                if not line:
+        ctx = ssl._create_unverified_context()
+        conn = http.client.HTTPSConnection("api.groq.com", 443, context=ctx, timeout=30)
+        conn.request("POST", "/openai/v1/chat/completions", body=payload, headers=headers)
+        resp = conn.getresponse()
+
+        if resp.status != 200:
+            err_text = resp.read().decode("utf-8", errors="ignore")
+            yield f"data: {json.dumps({'error': f'Groq Status {resp.status}: {err_text}'})}\n\n"
+            return
+
+        while True:
+            line_bytes = resp.readline()
+            if not line_bytes:
+                break
+            line_str = line_bytes.decode("utf-8", errors="ignore").strip()
+            if not line_str.startswith("data: "):
+                continue
+            data_str = line_str[6:].strip()
+            if data_str == "[DONE]":
+                break
+            try:
+                data = json.loads(data_str)
+                text = data["choices"][0]["delta"].get("content", "") or ""
+                if not text:
                     continue
-                line_str = line.decode("utf-8", errors="ignore").strip()
-                if not line_str.startswith("data: "):
+
+                # Filter out reasoning/thinking tags from qwen/deepseek models
+                if "<think>" in text:
+                    in_think = True
                     continue
-                data_str = line_str[6:].strip()
-                if data_str == "[DONE]":
-                    break
-                try:
-                    data = json.loads(data_str)
-                    text = data["choices"][0]["delta"].get("content", "") or ""
+                if "</think>" in text:
+                    in_think = False
+                    parts = text.split("</think>")
+                    text = parts[-1].lstrip()
                     if not text:
                         continue
+                elif in_think:
+                    continue
 
-                    # Filter out reasoning/thinking tags from qwen/deepseek models
-                    if "<think>" in text:
-                        in_think = True
-                        continue
-                    if "</think>" in text:
-                        in_think = False
-                        parts = text.split("</think>")
-                        text = parts[-1].lstrip()
-                        if not text:
-                            continue
-                    elif in_think:
-                        continue
-
-                    buf += text
-                    if detect_prompt_leak(buf):
-                        events.record("leak_blocked", risk="high",
-                                      detail="system prompt leak (stream)")
-                        yield f"data: {json.dumps({'trace': {'step': 'shield', 'detail': 'leak_blocked'}})}\n\n"
-                        yield f"data: {json.dumps({'chunk': ' …[response withheld: I keep my configuration private.]'})}\n\n"
-                        break
-                    yield f"data: {json.dumps({'chunk': text})}\n\n"
-                    await asyncio.sleep(0)
-                except Exception:
-                    pass
+                buf += text
+                if detect_prompt_leak(buf):
+                    events.record("leak_blocked", risk="high",
+                                  detail="system prompt leak (stream)")
+                    yield f"data: {json.dumps({'trace': {'step': 'shield', 'detail': 'leak_blocked'}})}\n\n"
+                    yield f"data: {json.dumps({'chunk': ' …[response withheld: I keep my configuration private.]'})}\n\n"
+                    break
+                yield f"data: {json.dumps({'chunk': text})}\n\n"
+                await asyncio.sleep(0)
+            except Exception:
+                pass
 
         prompt_content = messages[0]["content"] if isinstance(messages[0], dict) else messages[0].content
         groq_url = "https://api.groq.com/openai/v1/chat/completions"
