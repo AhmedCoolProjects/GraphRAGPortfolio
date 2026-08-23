@@ -202,7 +202,6 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         if not api_key:
             raise RuntimeError("GROQ_API_KEY not set")
 
-        prompt_content = messages[0]["content"] if isinstance(messages[0], dict) else messages[0].content
         groq_url = "https://api.groq.com/openai/v1/chat/completions"
         groq_headers = {
             "Authorization": f"Bearer {api_key}",
@@ -211,7 +210,7 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         }
         groq_payload = {
             "model": MODEL_NAME,
-            "messages": [{"role": "user", "content": prompt_content}],
+            "messages": messages,
             "temperature": 0.3,
             "max_tokens": 600,
             "stream": True,

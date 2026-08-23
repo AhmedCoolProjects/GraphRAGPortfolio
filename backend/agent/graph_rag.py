@@ -248,16 +248,18 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
 # Generation prompt (shared by the graph and the streaming endpoint)
 # ---------------------------------------------------------------------------
 def build_generation_messages(state: Dict[str, Any]):
-    """Return a ChatPromptValue-compatible message list for the LLM."""
+    """Return a structured [system, user] message list for the LLM."""
     template = load_persona_template()
     context = state.get("context", "").strip()
     if not context:
-        context = "(No specific stored memory matched. Answer from your own "
-        context += "knowledge as a Ph.D. student, staying in character.)"
-    filled = template.replace("{context}", context).replace(
-        "{question}", state["question"]
-    )
-    return [{"role": "user", "content": filled}]
+        context = "(No specific stored memory matched. Answer from your own knowledge as a Ph.D. student, staying in character.)"
+    
+    system_instruction = template.replace("{context}", context).replace("{question}", "").strip()
+    user_question = state["question"]
+    return [
+        {"role": "system", "content": system_instruction},
+        {"role": "user", "content": user_question}
+    ]
 
 
 def _compose_context(graph_facts: List[str], vector_chunks: List[str]) -> str:
