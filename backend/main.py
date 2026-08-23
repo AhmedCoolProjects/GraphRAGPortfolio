@@ -222,10 +222,10 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         in_think = False
         with requests.post(groq_url, headers=groq_headers, json=groq_payload, verify=False, stream=True, timeout=30.0) as response:
             response.raise_for_status()
-            for line in response.iter_lines():
+            for line in response.iter_lines(decode_unicode=True):
                 if not line:
                     continue
-                line_str = line.decode("utf-8").strip()
+                line_str = line.strip()
                 if not line_str.startswith("data: "):
                     continue
                 data_str = line_str[6:].strip()
@@ -282,10 +282,10 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
         in_think = False
         with requests.post(groq_url, headers=groq_headers, json=groq_payload, verify=False, stream=True, timeout=30.0) as response:
             response.raise_for_status()
-            for line in response.iter_lines():
+            for line in response.iter_lines(decode_unicode=True):
                 if not line:
                     continue
-                line_str = line.decode("utf-8").strip()
+                line_str = line.strip()
                 if not line_str.startswith("data: "):
                     continue
                 data_str = line_str[6:].strip()
