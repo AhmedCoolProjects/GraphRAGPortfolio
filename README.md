@@ -72,6 +72,7 @@ This monorepo powers an AI-driven digital twin designed to answer complex techni
 - **Prompt Injection Defense**: Pre-execution input classification blocking adversarial jailbreaks.
 - **System Prompt Leak Guard**: Output stream monitoring to prevent sensitive context disclosure.
 - **Rate Limiting & Red-Teaming Suite**: Built-in endpoints for automated security evaluation.
+- **Data Privacy & Open-Source Audit**: All biography, research, and project knowledge base files stored under `backend/data/` are 100% sanitized, public-ready, and clean of private credentials, SSH keys, or confidential secrets.
 
 
 <img width="1727" height="997" alt="image" src="https://github.com/user-attachments/assets/3c14be0e-855c-41b0-a8bf-890483d13a42" />
