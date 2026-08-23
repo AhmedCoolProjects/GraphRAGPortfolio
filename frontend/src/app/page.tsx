@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useStore } from '@/store/useStore'
 import { Github, Linkedin, Mail, ArrowDown, Brain, Shield, Code2, ArrowUpRight } from "lucide-react";
 import { PointerHighlight } from "@/components/ui/pointer-highlight";
+import { GithubStarButton } from "@/components/ui/github-star-button";
 
 const SOCIALS = {
   github: `https://${KNOWLEDGE_BASE.contact.github}`,
@@ -53,7 +54,8 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-sm bg-white/70 dark:bg-zinc-950/70">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <a href="#top" className="text-sm font-medium tracking-tight">AB.</a>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <GithubStarButton />
             <a
               href={SOCIALS.github}
               aria-label="GitHub"

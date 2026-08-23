@@ -20,6 +20,7 @@ import Image from "next/image";
 import { NAVIGATION_ITEMS } from "@/constants/navigation";
 import { ReasoningTrace } from "@/components/prod/chat/reasoning-trace";
 import { GraphPanel } from "@/components/prod/graph/graph-panel";
+import { GithubStarButton } from "@/components/ui/github-star-button";
 import type { GraphPath, TraceStep } from "@/lib/graph";
 
 type Role = "user" | "assistant";
@@ -309,7 +310,8 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <GithubStarButton className="mr-1" />
             <button
               onClick={() => router.push("/security")}
               className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors px-2.5 py-1.5 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-900"
