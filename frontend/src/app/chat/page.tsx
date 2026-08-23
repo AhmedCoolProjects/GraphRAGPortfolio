@@ -158,10 +158,9 @@ export default function ChatPage() {
                 setIsThinking(false);
                 setIsStreaming(true);
               }
-              const visible = stripImages(fullResponse);
               setMessages((prev) =>
                 prev.map((m) =>
-                  m.id === assistantId ? { ...m, content: visible } : m
+                  m.id === assistantId ? { ...m, content: fullResponse } : m
                 )
               );
             }
@@ -187,12 +186,9 @@ export default function ChatPage() {
           }
         }
 
-        // Images are disabled in this version — only keep the text body.
-        const cleanText = stripImages(fullResponse);
-
         setMessages((prev) =>
           prev.map((m) =>
-            m.id === assistantId ? { ...m, content: cleanText } : m
+            m.id === assistantId ? { ...m, content: fullResponse } : m
           )
         );
       } catch (err: unknown) {
