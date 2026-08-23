@@ -219,7 +219,11 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         buf = ""
         in_think = False
-        with requests.post(groq_url, headers=groq_headers, json=groq_payload, verify=False, stream=True, timeout=30.0) as resp:
+        try:
+            session = requests.Session()
+            adapter = requests.adapters.HTTPAdapter(max_retries=3)
+            session.mount("https://", adapter)
+            with session.post(groq_url, headers=groq_headers, json=groq_payload, verify=False, stream=True, timeout=30.0) as resp:
             if resp.status_code != 200:
                 yield f"data: {json.dumps({'error': f'Groq Status {resp.status_code}: {resp.text}'})}\n\n"
                 return
