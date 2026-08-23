@@ -6,7 +6,7 @@ Created by **Ahmed Bargady** — PhD Student in AI & Cybersecurity at **UM6P (Mo
 
 ---
 
-<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/8e348d85-224c-4ef8-8a76-9cefeb62d7ac" />
+<img width="1727" height="997" alt="image" src="https://github.com/user-attachments/assets/9aba336b-b0ec-4586-8976-27a8eca1a8b1" />
 
 
 ---
@@ -15,6 +15,7 @@ Created by **Ahmed Bargady** — PhD Student in AI & Cybersecurity at **UM6P (Mo
 
 This monorepo powers an AI-driven digital twin designed to answer complex technical, research, and career inquiries in real-time. Unlike standard RAG systems, it combines **Agentic Corrective RAG (LangGraph)**, structured **Knowledge Graphs**, and **AI Security Guardrails**.
 
+<img width="1727" height="997" alt="image" src="https://github.com/user-attachments/assets/21235ad6-7032-4fb0-8aa0-605b306c2cf1" />
 
 
 ```text
@@ -52,7 +53,8 @@ This monorepo powers an AI-driven digital twin designed to answer complex techni
 - **Corrective Retrieval Loop**: Grades retrieved facts; if context is insufficient, it rewrites the query dynamically and re-retrieves before generation.
 - **Hybrid Retrieval**: Fuses deterministic Knowledge Graph subgraphs with high-dimensional vector embeddings for max recall and precision.
 
-<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/a12c7aaf-1666-4bbf-bbfd-2596810fe412" />
+
+<img width="1727" height="997" alt="image" src="https://github.com/user-attachments/assets/dd962494-acba-427a-8545-d21a0a5e7be7" />
 
 
 ---
@@ -61,7 +63,7 @@ This monorepo powers an AI-driven digital twin designed to answer complex techni
 - **Entity Linking**: Maps research domains (APT Detection, Provenance Graphs, GNNs, Transformers) to papers, projects, and skills.
 - **Live Traversal Stream**: Emits active graph paths alongside response streams, rendering interactive node topologies in the UI.
 
-<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/8d22319e-dd59-444d-a537-4c283b00ad2c" />
+<img width="1727" height="997" alt="image" src="https://github.com/user-attachments/assets/9686b86b-4642-4174-ada6-6523f696df15" />
 
 
 ---
@@ -71,7 +73,8 @@ This monorepo powers an AI-driven digital twin designed to answer complex techni
 - **System Prompt Leak Guard**: Output stream monitoring to prevent sensitive context disclosure.
 - **Rate Limiting & Red-Teaming Suite**: Built-in endpoints for automated security evaluation.
 
-<img width="1728" height="996" alt="image" src="https://github.com/user-attachments/assets/4732f7f5-b50f-4eae-bde7-9266f3f029d5" />
+
+<img width="1727" height="997" alt="image" src="https://github.com/user-attachments/assets/3c14be0e-855c-41b0-a8bf-890483d13a42" />
 
 
 ---
