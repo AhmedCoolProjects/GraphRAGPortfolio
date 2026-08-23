@@ -140,44 +140,49 @@ export default function ChatPage() {
           const lines = chunk.split("\n");
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
+            let data: any = null;
             try {
-              const data = JSON.parse(line.slice(6));
-              if (data.chunk) {
-                fullResponse += data.chunk;
-                if (firstChunk) {
-                  firstChunk = false;
-                  setIsThinking(false);
-                  setIsStreaming(true);
-                }
-                const visible = stripImages(fullResponse);
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantId ? { ...m, content: visible } : m
-                  )
-                );
-              }
-              if (data.trace) {
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantId
-                      ? { ...m, trace: [...(m.trace ?? []), data.trace] }
-                      : m
-                  )
-                );
-              }
-              if (data.graph_path) {
-                setLatestGraphPath(data.graph_path);
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantId
-                      ? { ...m, graphPath: data.graph_path }
-                      : m
-                  )
-                );
-              }
-              if (data.error) throw new Error(data.error);
+              data = JSON.parse(line.slice(6));
             } catch {
-              // skip invalid lines
+              continue;
+            }
+
+            if (data?.error) {
+              throw new Error(data.error);
+            }
+
+            if (data?.chunk) {
+              fullResponse += data.chunk;
+              if (firstChunk) {
+                firstChunk = false;
+                setIsThinking(false);
+                setIsStreaming(true);
+              }
+              const visible = stripImages(fullResponse);
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId ? { ...m, content: visible } : m
+                )
+              );
+            }
+            if (data?.trace) {
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId
+                    ? { ...m, trace: [...(m.trace ?? []), data.trace] }
+                    : m
+                )
+              );
+            }
+            if (data?.graph_path) {
+              setLatestGraphPath(data.graph_path);
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId
+                    ? { ...m, graphPath: data.graph_path }
+                    : m
+                )
+              );
             }
           }
         }
