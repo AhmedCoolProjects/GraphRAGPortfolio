@@ -196,8 +196,8 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         messages = build_generation_messages(state)
 
-        # Stream the final generation using requests stream
-        import requests
+        # Stream the final generation using async httpx client
+        import httpx
         api_key = os.getenv("GROQ_API_KEY", "").strip()
         if not api_key:
             raise RuntimeError("GROQ_API_KEY not set")
@@ -218,54 +218,51 @@ async def stream_response(question: str, client_id: str) -> AsyncGenerator[str, 
 
         buf = ""
         in_think = False
-        try:
-            session = requests.Session()
-            adapter = requests.adapters.HTTPAdapter(max_retries=3)
-            session.mount("https://", adapter)
-            with session.post(groq_url, headers=groq_headers, json=groq_payload, verify=False, stream=True, timeout=30.0) as resp:
-            if resp.status_code != 200:
-                yield f"data: {json.dumps({'error': f'Groq Status {resp.status_code}: {resp.text}'})}\n\n"
-                return
+        async with httpx.AsyncClient(verify=False, timeout=30.0) as client:
+            async with client.stream("POST", groq_url, headers=groq_headers, json=groq_payload) as resp:
+                if resp.status_code != 200:
+                    err_body = await resp.aread()
+                    yield f"data: {json.dumps({'error': f'Groq Status {resp.status_code}: {err_body.decode()}'})}\n\n"
+                    return
 
-            for line in resp.iter_lines():
-                if not line:
-                    continue
-                line_str = line.decode("utf-8", errors="ignore").strip()
-                if not line_str.startswith("data: "):
-                    continue
-                data_str = line_str[6:].strip()
-                if data_str == "[DONE]":
-                    break
-                try:
-                    data = json.loads(data_str)
-                    text = data["choices"][0]["delta"].get("content", "") or ""
-                    if not text:
+                async for line in resp.aiter_lines():
+                    if not line:
                         continue
-
-                    # Filter out reasoning/thinking tags from qwen/deepseek models
-                    if "<think>" in text:
-                        in_think = True
+                    line_str = line.strip()
+                    if not line_str.startswith("data: "):
                         continue
-                    if "</think>" in text:
-                        in_think = False
-                        parts = text.split("</think>")
-                        text = parts[-1].lstrip()
+                    data_str = line_str[6:].strip()
+                    if data_str == "[DONE]":
+                        break
+                    try:
+                        data = json.loads(data_str)
+                        text = data["choices"][0]["delta"].get("content", "") or ""
                         if not text:
                             continue
-                    elif in_think:
-                        continue
 
-                    buf += text
-                    if detect_prompt_leak(buf):
-                        events.record("leak_blocked", risk="high",
-                                      detail="system prompt leak (stream)")
-                        yield f"data: {json.dumps({'trace': {'step': 'shield', 'detail': 'leak_blocked'}})}\n\n"
-                        yield f"data: {json.dumps({'chunk': ' …[response withheld: I keep my configuration private.]'})}\n\n"
-                        break
-                    yield f"data: {json.dumps({'chunk': text})}\n\n"
-                    await asyncio.sleep(0)
-                except Exception:
-                    pass
+                        # Filter out reasoning/thinking tags from qwen/deepseek models
+                        if "<think>" in text:
+                            in_think = True
+                            continue
+                        if "</think>" in text:
+                            in_think = False
+                            parts = text.split("</think>")
+                            text = parts[-1].lstrip()
+                            if not text:
+                                continue
+                        elif in_think:
+                            continue
+
+                        buf += text
+                        if detect_prompt_leak(buf):
+                            events.record("leak_blocked", risk="high",
+                                          detail="system prompt leak (stream)")
+                            yield f"data: {json.dumps({'trace': {'step': 'shield', 'detail': 'leak_blocked'}})}\n\n"
+                            yield f"data: {json.dumps({'chunk': ' …[response withheld: I keep my configuration private.]'})}\n\n"
+                            break
+                        yield f"data: {json.dumps({'chunk': text})}\n\n"
+                    except Exception:
+                        pass
 
         yield f"data: {json.dumps({'done': True})}\n\n"
     except Exception as e:
